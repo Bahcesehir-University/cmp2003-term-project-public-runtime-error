@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include<string>
-#include<cstddef>
+#include <string>
+#include <cstddef>
+#include <string_view>
 
 
 using namespace std;
@@ -36,18 +37,19 @@ void TripAnalyzer::ingestFile(const std::string& csvPath) {
             if (row.empty()) {
                 continue;
             }
-            size_t p1 = row.find(',');
-            if (p1 == string::npos) continue;
-            size_t p2 = row.find(',', p1 + 1);
-            if (p2 == string::npos) continue;
-            size_t p3 = row.find(',', p2 + 1);
-			if (p3 == string::npos) continue;
-			size_t p4 = row.find(',', p3 + 1);
-			if (p4 == string::npos) continue;
-			size_t p5 = row.find(',', p4 + 1);
-			if (p5 == string::npos) continue;
-            string pickupid = row.substr(p1 + 1, p2 - p1 - 1);
-            string pickuptime = row.substr(p3 + 1, p4 - p3 - 1);
+            string_view v(row);
+            size_t p1 = v.find(',');
+            if (p1 == string_view::npos) continue;
+            size_t p2 = v.find(',', p1 + 1);
+            if (p2 == string_view::npos) continue;
+            size_t p3 = v.find(',', p2 + 1);
+			if (p3 == string_view::npos) continue;
+			size_t p4 = v.find(',', p3 + 1);
+			if (p4 == string_view::npos) continue;
+			size_t p5 = v.find(',', p4 + 1);
+			if (p5 == string_view::npos) continue;
+            string pickupid(v.substr(p1 + 1, p2 - p1 - 1));
+            string_view pickuptime = v.substr(p3 + 1, p4 - p3 - 1);
             if (pickuptime.length() < 13) continue;
             try {
                 int hour = (pickuptime[11] - '0') * 10 + (pickuptime[12] - '0');
